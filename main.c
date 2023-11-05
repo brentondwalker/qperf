@@ -14,6 +14,7 @@ static void usage(const char *cmd)
             "Options:\n"
             "  -c target            run as client and connect to target server\n"
             "  --cc [reno,cubic]    congestion control algorithm to use (default reno)\n"
+	    "  -b n[K|M]            set the target bitrate\n"
             "  -e                   measure time for connection establishment and first byte only\n"
             "  -g                   enable UDP generic segmentation offload\n"
             "  --iw initial-window  initial window to use (default 10)\n"
@@ -38,6 +39,7 @@ int main(int argc, char** argv)
     int port = 18080;
     bool server_mode = false;
     const char *host = NULL;
+    const char *bitrate = NULL;
     int runtime_s = 10;
     int ch;
     bool ttfb_only = false;
@@ -45,8 +47,8 @@ int main(int argc, char** argv)
     const char *logfile = NULL;
     const char *cc = "reno";
     int iw = 10;
-
-    while ((ch = getopt_long(argc, argv, "c:egl:p:st:h", long_options, NULL)) != -1) {
+    
+    while ((ch = getopt_long(argc, argv, "c:b:egl:p:st:h", long_options, NULL)) != -1) {
         switch (ch) {
         case 0:
             if(strcmp(optarg, "reno") != 0 && strcmp(optarg, "cubic") != 0) {
@@ -64,6 +66,9 @@ int main(int argc, char** argv)
             break;
         case 'c':
             host = optarg;
+            break;
+        case 'b':
+            bitrate = optarg;
             break;
         case 'e':
             ttfb_only = true;
@@ -116,5 +121,5 @@ int main(int argc, char** argv)
     sprintf(port_char, "%d", port);
     return server_mode ?
                 run_server(port_char, gso, logfile, cc, iw, "server.crt", "server.key") :
-                run_client(port_char, gso, logfile, cc, iw, host, runtime_s, ttfb_only);
+      run_client(port_char, gso, logfile, cc, iw, host, runtime_s, ttfb_only, bitrate);
 }
