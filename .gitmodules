@@ -1,3 +1,4 @@
 [submodule "extern/quicly"]
 	path = extern/quicly
 	url = https://github.com/brentondwalker/quicly.git
+	branch = master
