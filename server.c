@@ -188,6 +188,10 @@ int run_server(const char *port, bool gso, const char *logfile, const char *cc, 
         server_ctx.init_cc = &quicly_cc_reno_init;
     } else if(strcmp(cc, "cubic") == 0) {
         server_ctx.init_cc = &quicly_cc_cubic_init;
+    } else if(strcmp(cc, "pico") == 0) {
+        server_ctx.init_cc = &quicly_cc_pico_init;
+    } else if(strcmp(cc, "fixedcwnd") == 0) {
+        server_ctx.init_cc = &quicly_cc_fixedcwnd_init;
     }
 
     if (gso) {

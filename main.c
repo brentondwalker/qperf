@@ -13,7 +13,7 @@ static void usage(const char *cmd)
             "\n"
             "Options:\n"
             "  -c target            run as client and connect to target server\n"
-            "  --cc [reno,cubic]    congestion control algorithm to use (default reno)\n"
+            "  --cc [reno,cubic,pico,fixedcwnd]    congestion control algorithm to use (default reno)\n"
 	    "  -b n[K|M]            set the target bitrate\n"
             "  -e                   measure time for connection establishment and first byte only\n"
             "  -g                   enable UDP generic segmentation offload\n"
@@ -46,12 +46,14 @@ int main(int argc, char** argv)
     bool gso = false;
     const char *logfile = NULL;
     const char *cc = "reno";
+    const int cwnd = 0;
     int iw = 10;
     
     while ((ch = getopt_long(argc, argv, "c:b:egl:p:st:h", long_options, NULL)) != -1) {
         switch (ch) {
         case 0:
-            if(strcmp(optarg, "reno") != 0 && strcmp(optarg, "cubic") != 0) {
+            if(strcmp(optarg, "reno") != 0 && strcmp(optarg, "cubic") != 0
+	       && strcmp(optarg, "pico") != 0 && strcmp(optarg, "fixedcwnd") != 0 ) {
                 fprintf(stderr, "invalid argument passed to --cc\n");
                 exit(1);
             }
