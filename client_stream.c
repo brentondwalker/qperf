@@ -47,6 +47,8 @@ static void client_stream_send_stop(quicly_stream_t *stream, int err)
 
 static void client_stream_receive(quicly_stream_t *stream, size_t off, const void *src, size_t len)
 {
+  //printf("client_stream_receive(%ld)\n",len);
+
     if(first_receive) {
         bytes_received = 0;
         first_receive = false;
@@ -56,9 +58,21 @@ static void client_stream_receive(quicly_stream_t *stream, size_t off, const voi
     }
 
     if(len == 0) {
+      printf("len=0\n");
         return;
     }
 
+    if (off+len < stream->recvstate.eos) {
+      uint8_t *buf = (uint8_t *)src;
+      printf("data[%ld] (%ld): ",off, stream->recvstate.eos);
+      for (int i=0; i<len && i<1; i++) {
+	printf("%02x ", buf[off+i]);
+      }
+      printf("\n");
+    } else {
+      printf("past end of buffer\n");
+    }
+    
     bytes_received += len;
     quicly_stream_sync_recvbuf(stream, len);
 }

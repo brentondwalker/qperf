@@ -7,6 +7,8 @@
 #include <picotls/openssl.h>
 #include <errno.h>
 
+uint32_t msg_counter = 0;
+
 ptls_context_t *get_tlsctx()
 {
     static ptls_context_t tlsctx = {.random_bytes = ptls_openssl_random_bytes,
@@ -37,7 +39,12 @@ struct addrinfo *get_address(const char *host, const char *port)
 
 bool send_dgrams_default(int fd, struct sockaddr *dest, struct iovec *dgrams, size_t num_dgrams)
 {
+  //printf("QPERF: send_dgrams(%ld)\n",num_dgrams);
+
     for(size_t i = 0; i < num_dgrams; ++i) {
+      //if ()
+      //uint32_t *ptr = (uint32_t*)(&dgrams[i]);
+      //*ptr = msg_counter++;
         struct msghdr mess = {
             .msg_name = dest,
             .msg_namelen = quicly_get_socklen(dest),
@@ -116,6 +123,13 @@ bool send_pending(quicly_context_t *ctx, int fd, quicly_conn_t *conn)
     uint8_t dgrams_buf[SEND_BATCH_SIZE * ctx->transport_params.max_udp_payload_size];
     size_t num_dgrams = SEND_BATCH_SIZE;
 
+    //printf("send_pending(%d, numdgrams=%ld, size=%ld)\n", msg_counter, num_dgrams, (SEND_BATCH_SIZE * ctx->transport_params.max_udp_payload_size));
+
+    uint64_t buflen32 = (SEND_BATCH_SIZE * ctx->transport_params.max_udp_payload_size)/4;
+    for (int ii=0; ii<buflen32; ii++) {
+      *(uint32_t*)(&dgrams_buf[ii]) = msg_counter++;
+    }
+    
     while(true) {
         int quicly_res = quicly_send(conn, &dest, &src, dgrams, &num_dgrams, &dgrams_buf, sizeof(dgrams_buf));
         if(quicly_res != 0) {
@@ -129,6 +143,7 @@ bool send_pending(quicly_context_t *ctx, int fd, quicly_conn_t *conn)
             return true;
         }
 
+	//printf("calling send_dgrams(%ld)\n", num_dgrams);
         if (!send_dgrams(fd, &dest.sa, dgrams, num_dgrams)) {
             return false;
         }

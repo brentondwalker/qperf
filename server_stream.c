@@ -55,6 +55,8 @@ static void server_stream_send_shift(quicly_stream_t *stream, size_t delta)
     s->acked_offset += delta;
 }
 
+
+uint8_t a_byte = 0x00;
 static void server_stream_send_emit(quicly_stream_t *stream, size_t off, void *dst, size_t *len, int *wrote_all)
 {
     server_stream *s = stream->data;
@@ -69,7 +71,8 @@ static void server_stream_send_emit(quicly_stream_t *stream, size_t off, void *d
         assert(data_off + *len == s->target_offset);
     }
 
-    memset(dst, 0x58, *len);
+    //memset(dst, 0x58, *len);
+    memset(dst, a_byte++, *len);
 }
 
 static void server_stream_send_stop(quicly_stream_t *stream, int err)

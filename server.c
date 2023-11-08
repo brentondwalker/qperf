@@ -24,6 +24,8 @@ static size_t num_conns = 0;
 static ev_timer server_timeout;
 static quicly_cid_plaintext_t next_cid;
 
+int packetnum = 0;
+
 static int udp_listen(struct addrinfo *addr)
 {
     for(const struct addrinfo *rp = addr; rp != NULL; rp = rp->ai_next) {

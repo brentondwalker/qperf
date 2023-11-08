@@ -55,6 +55,8 @@ void client_read_cb(EV_P_ ev_io *w, int revents)
     quicly_decoded_packet_t packet;
     ssize_t bytes_received;
 
+    //printf("QPERF: client_read_cb()\n");
+    
     while((bytes_received = recvfrom(w->fd, buf, sizeof(buf), MSG_DONTWAIT, &sa, &salen)) != -1) {
         for(ssize_t offset = 0; offset < bytes_received; ) {
             size_t packet_len = quicly_decode_packet(&client_ctx, &packet, buf, bytes_received, &offset);
@@ -76,6 +78,7 @@ void client_read_cb(EV_P_ ev_io *w, int revents)
                 printf("connection establishment time: %lums\n", establish_time);
             }
         }
+	//printf("QPERF: rx paket %08x\n", *((uint32_t*)buf));
     }
 
     if(errno != EWOULDBLOCK && errno != 0) {
@@ -93,6 +96,7 @@ void client_read_cb(EV_P_ ev_io *w, int revents)
 void enqueue_request(quicly_conn_t *conn)
 {
     quicly_stream_t *stream;
+    printf("QPERF: quicly_open_stream\n");
     int ret = quicly_open_stream(conn, &stream, 0);
     assert(ret == 0);
     const char *req = "qperf start sending";
