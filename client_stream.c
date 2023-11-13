@@ -8,6 +8,7 @@
 
 static int current_second = 0;
 static uint64_t bytes_received = 0;
+static uint64_t total_bytes_received = 0;
 static ev_timer report_timer;
 static bool first_receive = true;
 static int runtime_s = 10;
@@ -28,9 +29,12 @@ void format_size(char *dst, double bytes)
 static void report_cb(EV_P_ ev_timer *w, int revents)
 {
     char size_str[100];
+    char total_size_str[100];
     format_size(size_str, bytes_received);
+    total_bytes_received += bytes_received;
+    format_size(total_size_str, total_bytes_received/(current_second+1));
 
-    printf("second %i: %s (%lu bytes received)\n", current_second, size_str, bytes_received);
+    printf("second %i: %s (%lu bytes received) (total %lu  average %s)\n", current_second, size_str, bytes_received, total_bytes_received, total_size_str);
     fflush(stdout);
     ++current_second;
     bytes_received = 0;
