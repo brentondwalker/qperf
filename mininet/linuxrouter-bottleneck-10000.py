@@ -40,7 +40,7 @@ class NetworkTopo(Topo):
                      s2,
                      intfName1='r1-eth2',
                      params1={'ip': '10.1.0.1/24'},
-                     bw=10, delay='25ms', loss=0, max_queue_size=1000, use_tbf=True)
+                     bw=10, delay='20ms', loss=0, max_queue_size=10000, use_tbf=True)
 
         # Add two "TX" hosts on one subnet, and one "RX" host on the other
         tx1 = self.addHost(name='tx1',
@@ -54,8 +54,8 @@ class NetworkTopo(Topo):
                           defaultRoute='via 10.1.0.1')
 
         # Connect the hosts to their respective switches
-        self.addLink(tx1, s1, bw=1000, delay='0ms', loss=0, use_tbf=True)
-        self.addLink(tx2, s1, bw=1000, delay='0ms', loss=0, use_tbf=True)
+        self.addLink(tx1, s1, bw=100, delay='0ms', loss=0, use_tbf=True)
+        self.addLink(tx2, s1, bw=100, delay='0ms', loss=0, use_tbf=True)
         self.addLink(rx1, s2)
 
 
