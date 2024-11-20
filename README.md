@@ -2,13 +2,15 @@
 A performance measurement tool for QUIC similar to iperf.
 Uses https://github.com/h2o/quicly 
 
+This version is modified to disable congestion control and send with a fixed cwnd.
+
 # basic usage and example output
 ```
 Usage: ./qperf [options]
 
 Options:
   -c target             run as client and connect to target server
-  --cc [reno,cubic]     congestion control algorithm to use (default reno)
+  --cc [reno,cubic,fixedcwnd]     congestion control algorithm to use (default reno)
   -e                    measure time for connection establishment and first byte only
   -g                    enable UDP generic segmentation offload
   --iw initial-window   initial window to use (default 10)
